@@ -116,7 +116,7 @@ export const retrieveAnswerByloadQAStuffChain = async (dirPath: string, prompt: 
   return res;
 };
 
-
+// @docs: https://js.langchain.com/docs/modules/chains/index_related_chains/retrieval_qa
 export const answerWithChain = async (dirPath: string, prompt: string) => {
   const model = new OpenAI({
     temperature: 0,
