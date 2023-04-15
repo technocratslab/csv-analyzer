@@ -9,12 +9,17 @@ const FileUploader: React.FC<Props> = ({
     onFileUpload 
   }) => {
   const [file, setFile] = useState<File | null>(null);
+  const [question, setQuestion] = useState<string>('Give me important analysis from the data');
   const [analysisResults, setAnalysisResults] = useState<any>(null);
 
+  const onQuestionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setQuestion(event.target.value);
+  };
   const handleFileUpload = async () => {
     if (!file) return;
     const formData = new FormData();
     formData.append("file", file);
+    formData.append('question', question!)
     // const uploadPath = "/api/upload-csv";
     const uploadPath = "/api/upload";
 
@@ -27,7 +32,7 @@ const FileUploader: React.FC<Props> = ({
       throw err;
     });
     const data = await response.json();
-    onFileUpload(data.id);
+    // onFileUpload(data.id);
     setAnalysisResults(data);
   };
 
@@ -38,7 +43,7 @@ const FileUploader: React.FC<Props> = ({
   };
 
   return (
-    <div>
+    <div className="mx-5 inline-grid">
       <label htmlFor="file-upload" className="block mb-2 font-medium text-gray-700">
         Upload a CSV file:
       </label>
@@ -49,6 +54,15 @@ const FileUploader: React.FC<Props> = ({
         onChange={handleFileChange}
         className="border border-gray-400 rounded-md px-4 py-2 w-full mb-4"
       />
+      <input
+        id="question"
+        type="text"
+        value={question}
+        placeholder="Question"
+        onChange={onQuestionChange}
+        className="text-black border border-gray-400 rounded-md px-4 py-2 mb-4"
+      >
+      </input>
       <button
         onClick={handleFileUpload}
         className="bg-blue-500 text-white rounded-md px-4 py-2 font-medium"
