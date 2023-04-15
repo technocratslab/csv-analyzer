@@ -120,7 +120,7 @@ export const retrieveAnswerByloadQAStuffChain = async (dirPath: string, prompt: 
 export const answerWithChain = async (dirPath: string, prompt: string) => {
   const model = new OpenAI({
     temperature: 0,
-    modelName: AiModel.textAda
+    modelName: AiModel.textDavinci3
   });
   const vectorStore = await getStore(dirPath);
   const chain = RetrievalQAChain.fromLLM(model, vectorStore.asRetriever());
