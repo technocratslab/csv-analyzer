@@ -3,7 +3,7 @@ import fs from 'fs/promises';
 import { NextApiRequest, NextApiResponse } from 'next';
 import multer from 'multer';
 import { embedDocument } from '@/utils/embedding';
-import { AiModel, retrieveAnswer, retrieveAnswerByQARefineChain, retrieveAnswerByloadQAStuffChain } from '@/utils/query-data';
+import { AiModel, answerWithChain, retrieveAnswer, retrieveAnswerByQARefineChain, retrieveAnswerByloadQAStuffChain } from '@/utils/query-data';
 const upload = multer({ // Disk Storage option
   storage: multer.diskStorage({
     destination: './uploads',
@@ -30,13 +30,13 @@ apiRoute.post(async (req: NextApiRequest & {
 }, res: NextApiResponse) => {
   const file = req.file;
   // const { id, vectorPath } = await embedDocument(file.path);
-  const id = '7d85a79d-57d3-44af-9d9e-9f343efe1f62';
-  const vectorPath = 'vectors/7d85a79d-57d3-44af-9d9e-9f343efe1f62.vectors';
+  // console.log('------------------ { id, vectorPath } --------------------');
+  // console.log(JSON.stringify({ id, vectorPath }, null, 3));
+  // console.log('----------------- { id, vectorPath } END -----------------');
+  const id = 'd0f54a98-c681-4aa7-98db-26abfa9f1228';
+  const vectorPath = 'vectors/d0f54a98-c681-4aa7-98db-26abfa9f1228.vectors';
   await fs.unlink(file.path);
-  console.log('------------------ req.body.question --------------------');
-  console.log(JSON.stringify(req.body.question, null, 3));
-  console.log('----------------- req.body.question END -----------------');
-  const answer = await retrieveAnswerByloadQAStuffChain(vectorPath, req.body.question, AiModel.textDavinci3);
+  const answer = await answerWithChain(vectorPath, req.body.question);
   res.status(200).json({ id: id, vectorPath, data: 'Success', queryResponse: answer });
 });
 

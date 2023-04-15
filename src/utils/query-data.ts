@@ -1,5 +1,5 @@
 import { OpenAI } from "langchain/llms/openai";
-import { LLMChain, RetrievalQAChain, loadQAMapReduceChain, loadQARefineChain } from "langchain/chains";
+import { LLMChain, RetrievalQAChain, VectorDBQAChain, loadQAMapReduceChain, loadQARefineChain } from "langchain/chains";
 import { ConversationalRetrievalQAChain } from "langchain/chains";
 import { HNSWLib } from "langchain/vectorstores/hnswlib";
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
@@ -23,6 +23,16 @@ export enum AiModel {
   textDavinci3 = "text-davinci-003",
 }
 
+const getStore = async (dirPath: string): Promise<HNSWLib> => {
+  const embeddings = new OpenAIEmbeddings();
+
+  // Load the documents and create the vector store
+  const store = await HNSWLib.load(
+    dirPath,
+    embeddings
+  );
+  return store;
+};
 // RetrievalQAChain
 export const retrieveAnswerRetrievalQAChain = async (dirPath: string, prompt: string, aiModel: AiModel = AiModel.ada) => {
 
@@ -103,5 +113,20 @@ export const retrieveAnswerByloadQAStuffChain = async (dirPath: string, prompt: 
     input_documents: relevantDocs
   });
 
+  return res;
+};
+
+
+export const answerWithChain = async (dirPath: string, prompt: string) => {
+  const model = new OpenAI({
+    temperature: 0,
+    modelName: AiModel.textAda
+  });
+  const vectorStore = await getStore(dirPath);
+  const chain = RetrievalQAChain.fromLLM(model, vectorStore.asRetriever());
+  const res = await chain.call({
+    query: prompt,
+  });
+  console.log({ res });
   return res;
 };
