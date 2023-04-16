@@ -1,5 +1,4 @@
 import nextConnect from "next-connect";
-import fs from "fs/promises";
 import { NextApiRequest, NextApiResponse } from "next";
 import { answerWithChain } from "@/utils/query-data";
 
@@ -13,7 +12,7 @@ const apiRoute = nextConnect({
 });
 
 apiRoute.post(async (req: NextApiRequest & {}, res: NextApiResponse) => {
-  const id = req.body.id;
+  const id = req.query.id;
   const vectorPath = `vectors/${id}.vectors`;
   // const { id, vectorPath } = await embedDocument(file.path);
   // console.log('------------------ { id, vectorPath } --------------------');

@@ -1,29 +1,26 @@
-import React, { useEffect, useState } from "react";
+import { QuestionView } from "@/components/QuestionView/QuestionView";
+import { useRouter } from "next/router";
+import React from "react";
 
 type Props = {
   id: string;
 };
-const ResultsPage: React.FC<Props> = ({ id }) => {
-  const [insights, setInsights] = useState([]);
 
-  // function to fetch insights from API
-  const fetchInsights = async () => {
-    try {
-      const res = await fetch("/api/summaries/" + id);
-      const data = await res.json();
-      setInsights(data);
-    } catch (error) {
-      console.error(error);
-    }
+const ResultsPage: React.FC<Props> = () => {
+  const {
+    query: { id },
+  } = useRouter();
+  const handleQueryAnswer = async (question: string) => {
+    const results = await fetch(`api/question/${id}`, {
+      method: "POST",
+      body: JSON.stringify({ question }),
+    });
+    console.log(results);
   };
 
-  // useEffect hook to fetch insights when component mounts
-  useEffect(() => {
-    fetchInsights();
-  }, []);
-
   return (
-    <div className="container mx-auto">
+    <div className="h-screen p-10">
+      <QuestionView onSubmitForm={handleQueryAnswer} />
       <h1 className="text-4xl font-bold mb-4">Results</h1>
       {/* display insights using Material or Ant Design components */}
     </div>
