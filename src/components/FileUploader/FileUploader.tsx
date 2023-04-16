@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Button } from "../Button";
 import { useFileUpload } from "./useFileUpload";
 
 type Props = {
@@ -25,13 +26,14 @@ export const FileUploader: React.FC<Props> = ({ onFileUpload, onUploadStart }) =
   };
 
   return (
-    <div className="grid mt-10">
+    <div className="grid">
       <label
         htmlFor="file-upload"
         className="block mb-2 font-medium text-gray-700"
       >
         Upload a CSV file:
       </label>
+
       <input
         id="file-upload"
         type="file"
@@ -40,15 +42,9 @@ export const FileUploader: React.FC<Props> = ({ onFileUpload, onUploadStart }) =
         className="border border-gray-400 rounded-md px-4 py-2 w-full mb-4"
       />
 
-      <button
-        disabled={!file}
-        onClick={handleFileUpload}
-        className={`text-white font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 focus:outline-none dark:focus:ring-blue-800 mr-0 ${
-          !file ? "cursor-not-allowed bg-blue-400" : "bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700"
-        }`}
-      >
+      <Button disabled={!file} onClick={handleFileUpload}>
         Upload File & Analyse
-      </button>
+      </Button>
     </div>
   );
 };

@@ -16,10 +16,6 @@ export default async function uploadCSV(req: CustomNextApiRequest, res: NextApiR
   try {
     await upload.single('file')(req, res, async () => {
       const file = req.file;
-
-      console.log('------------------ file --------------------');
-      console.log(JSON.stringify(file, null, 3));
-      console.log('----------------- file END -----------------');
       if (!file) {
         return res.status(400).json({ error: 'Please upload a CSV file' });
       }

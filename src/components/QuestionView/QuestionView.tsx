@@ -1,10 +1,15 @@
 import { FC, useState } from "react";
+import { Button } from "../Button";
 
 type QuestionViewProps = {
+  loading: boolean;
   onSubmitForm: (question: string) => void;
 };
 
-export const QuestionView: FC<QuestionViewProps> = ({ onSubmitForm }) => {
+export const QuestionView: FC<QuestionViewProps> = ({
+  loading,
+  onSubmitForm,
+}) => {
   const [question, setQuestion] = useState("This is my default question");
 
   const onQuestionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -13,6 +18,7 @@ export const QuestionView: FC<QuestionViewProps> = ({ onSubmitForm }) => {
 
   const handleSubmitForm = () => {
     onSubmitForm(question);
+    setQuestion("");
   };
 
   return (
@@ -36,13 +42,9 @@ export const QuestionView: FC<QuestionViewProps> = ({ onSubmitForm }) => {
         />
       </div>
 
-      <button
-        onClick={handleSubmitForm}
-        type="button"
-        className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-      >
+      <Button loading={loading} onClick={handleSubmitForm} type="button">
         Ask Question
-      </button>
+      </Button>
     </form>
   );
 };
