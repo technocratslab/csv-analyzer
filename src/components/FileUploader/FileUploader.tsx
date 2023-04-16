@@ -1,29 +1,22 @@
 import { useState } from "react";
+import { useFileUpload } from "./useFileUpload";
 
 type Props = {
   onFileUpload: (fileId: string) => void;
+  onUploadStart: () => void;
 };
 
-export const FileUploader: React.FC<Props> = ({ onFileUpload }) => {
+export const FileUploader: React.FC<Props> = ({ onFileUpload, onUploadStart }) => {
   const [file, setFile] = useState<File | null>(null);
+  const { onFileUpload: handleUpload } = useFileUpload({
+    onSuccess: onFileUpload,
+  });
 
-  const handleFileUpload = async () => {
+  const handleFileUpload = () => {
     if (!file) return;
-    const formData = new FormData();
-    formData.append("file", file);
-    const uploadPath = "/api/upload";
-
-    const response = await fetch(uploadPath, {
-      method: "POST",
-      body: formData,
-    }).catch((err) => {
-      console.error(err);
-      throw err;
-    });
-
-    const data = await response.json();
-    onFileUpload(data.id);
-  };
+    handleUpload(file);
+    onUploadStart();
+  }
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files) return;
@@ -32,7 +25,7 @@ export const FileUploader: React.FC<Props> = ({ onFileUpload }) => {
   };
 
   return (
-    <div className="mx-5 grid">
+    <div className="grid mt-10">
       <label
         htmlFor="file-upload"
         className="block mb-2 font-medium text-gray-700"
@@ -48,8 +41,11 @@ export const FileUploader: React.FC<Props> = ({ onFileUpload }) => {
       />
 
       <button
+        disabled={!file}
         onClick={handleFileUpload}
-        className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+        className={`text-white font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 focus:outline-none dark:focus:ring-blue-800 mr-0 ${
+          !file ? "cursor-not-allowed bg-blue-400" : "bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700"
+        }`}
       >
         Upload File & Analyse
       </button>
