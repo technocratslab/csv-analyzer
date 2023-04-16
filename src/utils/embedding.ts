@@ -3,10 +3,10 @@ import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 import { HNSWLib } from "langchain/vectorstores/hnswlib";
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
 import { v4 as uuidv4 } from 'uuid';
+import { EmbeddingAIModel } from './types';
 
-export const embedDocument = async (filename: string) => {
+export const embedDocument = async (filename: string, aiModel: EmbeddingAIModel = EmbeddingAIModel.adaEmbedding) => {
   const csvText = await fs.readFile(filename, "utf8");
-  const openAIApiKey = process.env.OPENAI_API_KEY
 
   // splitting text into chunks 
   const textSplitter = new RecursiveCharacterTextSplitter({
@@ -19,7 +19,8 @@ export const embedDocument = async (filename: string) => {
   console.log('Creating vectors...');
 
   // create vectors
-  const vectors = await HNSWLib.fromDocuments(docs, new OpenAIEmbeddings({ openAIApiKey }));
+  const embeddingInstance = new OpenAIEmbeddings({ modelName: aiModel });
+  const vectors = await HNSWLib.fromDocuments(docs, embeddingInstance);
   console.log('Saving vectors...');
 
   const id: string = uuidv4();

@@ -10,18 +10,7 @@ import {
   PromptTemplate,
   SystemMessagePromptTemplate,
 } from "langchain/prompts";
-
-export enum AiModel {
-  ada = "ada",
-  gpt35Turbo = "gpt-3.5-turbo",
-  babbage = "babbage",
-  curie = "curie",
-  textCurie = "text-curie-001",
-  textAda = "text-ada-001",
-  textBabbage = "text-babbage-001",
-  davinci = "davinci",
-  textDavinci3 = "text-davinci-003",
-}
+import { CompletionAIModel } from "./types";
 
 const getStore = async (dirPath: string): Promise<HNSWLib> => {
   const embeddings = new OpenAIEmbeddings();
@@ -34,20 +23,15 @@ const getStore = async (dirPath: string): Promise<HNSWLib> => {
   return store;
 };
 // RetrievalQAChain
-export const retrieveAnswerRetrievalQAChain = async (dirPath: string, prompt: string, aiModel: AiModel = AiModel.ada) => {
+export const retrieveAnswerRetrievalQAChain = async (dirPath: string, prompt: string, aiModel: CompletionAIModel = CompletionAIModel.gptTurbo) => {
 
   const model = new OpenAI({
     openAIApiKey: process.env.OPENAI_API_KEY,
-    // modelName: aiModel
+    modelName: aiModel
   });
 
   console.log('created model');
-  const loadedVectorStore = await HNSWLib.load(
-    dirPath,
-    new OpenAIEmbeddings({
-      // modelName: aiModel,
-    })
-  );
+  const loadedVectorStore = await getStore(dirPath);
   console.log('loaded vector store');
 
   const vectorRetriever = await loadedVectorStore.asRetriever();
@@ -65,7 +49,7 @@ export const retrieveAnswerRetrievalQAChain = async (dirPath: string, prompt: st
 };
 
 // loadQARefineChain
-export const retrieveAnswerByQARefineChain = async (dirPath: string, prompt: string, aiModel: AiModel = AiModel.ada) => {
+export const retrieveAnswerByQARefineChain = async (dirPath: string, prompt: string, aiModel: CompletionAIModel = CompletionAIModel.gptTurbo) => {
   const embeddings = new OpenAIEmbeddings();
   const model = new OpenAI({});
   const chain = loadQARefineChain(model);
@@ -92,7 +76,7 @@ export const retrieveAnswerByQARefineChain = async (dirPath: string, prompt: str
 
 
 // loadQAMapReduceChain
-export const retrieveAnswerByloadQAStuffChain = async (dirPath: string, prompt: string, aiModel: AiModel = AiModel.ada) => {
+export const retrieveAnswerByloadQAStuffChain = async (dirPath: string, prompt: string, aiModel: CompletionAIModel = CompletionAIModel.gptTurbo) => {
   const model = new OpenAI({
     modelName: aiModel,
     maxConcurrency: 10
@@ -117,10 +101,10 @@ export const retrieveAnswerByloadQAStuffChain = async (dirPath: string, prompt: 
 };
 
 // @docs: https://js.langchain.com/docs/modules/chains/index_related_chains/retrieval_qa
-export const answerWithChain = async (dirPath: string, prompt: string) => {
+export const answerWithChain = async (dirPath: string, prompt: string, aiModel: CompletionAIModel = CompletionAIModel.gptTurbo) => {
   const model = new OpenAI({
     temperature: 0,
-    modelName: AiModel.textDavinci3
+    modelName: aiModel
   });
   const vectorStore = await getStore(dirPath);
   const chain = RetrievalQAChain.fromLLM(model, vectorStore.asRetriever());
