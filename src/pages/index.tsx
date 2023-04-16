@@ -22,7 +22,7 @@ export default function Home() {
   }
 
   return (
-    <div className="h-screen p-10 max-w-5xl m-auto">
+    <div className="h-screen p-10 bg-gradient-to-r from-indigo-200 via-purple-300 to-pink-200">
       <h1 className="text-3xl font-bold mb-10">Welcome to CSV Analyzer!</h1>
 
       {uploadingStatus === "failed" ? (
