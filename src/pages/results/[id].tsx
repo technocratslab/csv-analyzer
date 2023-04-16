@@ -11,7 +11,7 @@ const ResultsPage: React.FC<Props> = () => {
     query: { id },
   } = useRouter();
   const handleQueryAnswer = async (question: string) => {
-    const results = await fetch(`api/question/${id}`, {
+    const results = await fetch(`/api/question/${id}`, {
       method: "POST",
       body: JSON.stringify({ question }),
     });
