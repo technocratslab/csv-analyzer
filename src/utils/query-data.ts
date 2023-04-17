@@ -3,6 +3,7 @@ import {
   RetrievalQAChain,
   loadQAMapReduceChain,
   loadQARefineChain,
+  ConversationalRetrievalQAChain,
 } from "langchain/chains";
 import { HNSWLib } from "langchain/vectorstores/hnswlib";
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
@@ -88,6 +89,32 @@ export const retrieveAnswerByloadQAStuffChain = async (
     input_documents: relevantDocs,
   });
 
+  return res;
+};
+
+let chatHistory: Record<string, string> = {};
+export const retrieveAnswersByConversationalRetrievalQAChain = async (
+  dirPath: string,
+  prompt: string,
+  aiModel: CompletionAIModel = CompletionAIModel.gptTurbo
+) => {
+  /* Initialize the LLM to use to answer the question */
+  const model = new OpenAI({
+    modelName: aiModel
+  });
+  const vectorStore = await getStore(dirPath);
+
+  const chain = ConversationalRetrievalQAChain.fromLLM(
+    model,
+    vectorStore.asRetriever()
+  );
+
+  const question = prompt;
+  if (!chatHistory[dirPath]) {
+    chatHistory[dirPath] = '';
+  }
+  const res = await chain.call({ question, chat_history: chatHistory[dirPath] });
+  chatHistory[dirPath] = chatHistory[dirPath].concat(question + '\n' + res.text + '\n');
   return res;
 };
 

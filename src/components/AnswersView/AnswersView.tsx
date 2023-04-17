@@ -1,3 +1,4 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { FC } from "react";
 
 export type AnswerResults = {
@@ -12,7 +13,7 @@ export type AnswerViewProps = {
 export const AnswersView: FC<AnswerViewProps> = ({ results }) => {
   return (
     <div>
-      <h1 className="text-xl font-bold my-4">List of Answers</h1>
+      {results && <h1 className="text-xl font-bold my-4">List of Answers</h1>}
 
       {results.map((result, index) => (
         <div
@@ -21,7 +22,7 @@ export const AnswersView: FC<AnswerViewProps> = ({ results }) => {
         >
           <p className="mb-2 text-md">{result.question}</p>
           <p>
-            <strong className="text-md font-black">Answer: </strong> <br />{" "}
+            <strong className="text-md font-black">Answer: </strong> <br />
             {result.answer}
           </p>
         </div>

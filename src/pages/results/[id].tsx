@@ -21,7 +21,7 @@ const ResultsPage: React.FC<Props> = () => {
     });
     setLoading(false);
     const data = await response.json();
-    setResults([...results, { question, answer: data.queryResponse.text }]);
+    setResults([{ question, answer: data.queryResponse.text }, ...results]);
   };
 
   return (
