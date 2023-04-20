@@ -5,6 +5,8 @@
 /.pnp
 .pnp.js
 
+.env
+
 # testing
 /coverage
 
@@ -39,3 +41,5 @@ next-env.d.ts
 
 #vectors
 /vectors
+
+/uploads
